@@ -20,5 +20,6 @@
 - **2025-11-13 @ 00:46 IST** – Implemented backend placeholder API (auth, users, friends, groups, messages) with mock data, CORS, and health checks; typecheck green across workspaces.
 - **2025-11-13 @ 01:13 IST** – Replaced popup mock data with live API integration (friends, requests, groups, messages, search), added typed client + env config, and surfaced loading/error states; workspace typecheck still clean.
 - **2025-11-13 @ 01:54 IST** – Added message send flow (backend `/messages/send`, popup Send button hooked to active tab URL, basic error/loader handling) and refreshed manifest permissions.
+- **2025-11-13 @ 02:08 IST** – Introduced glassmorphism theme tokens (colors, blur, gradients) and refreshed popup primitives + layout for cohesive frosted-glass styling with generous spacing and clear active states.
 
 

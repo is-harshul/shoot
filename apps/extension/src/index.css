@@ -14,13 +14,19 @@
   body {
     margin: 0;
     min-width: 320px;
-    background-color: #fdf7f2;
-    background-image: radial-gradient(#ffe8f8 1px, transparent 1px),
-      radial-gradient(#c6f5ff 1px, transparent 1px);
-    background-size: 28px 28px;
-    background-position: 0 0, 14px 14px;
+  background: radial-gradient(
+      circle at 20% 20%,
+      rgba(96, 165, 250, 0.25),
+      transparent 55%
+    ),
+    radial-gradient(
+      circle at 80% 0%,
+      rgba(244, 114, 182, 0.18),
+      transparent 50%
+    ),
+    #0f172a;
     font-family: "Inter var", Inter, system-ui, sans-serif;
-    color: #1f1d2b;
+  color: #e2e8f0;
   }
 
   #root {

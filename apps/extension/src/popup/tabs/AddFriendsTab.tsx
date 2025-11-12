@@ -33,12 +33,12 @@ export const AddFriendsTab = ({
   };
 
   return (
-    <div className="flex h-full flex-col gap-5">
-      <section className="rounded-3xl border-2 border-brutal-navy bg-white p-6 shadow-brutal">
-        <h3 className="text-base font-semibold text-brutal-navy">
+    <div className="flex h-full flex-col gap-glass-lg">
+      <section className="rounded-glass border border-white/20 bg-white/20 p-glass-lg shadow-glass backdrop-blur-glass">
+        <h3 className="text-base font-semibold text-white">
           Find users by User ID or Email
         </h3>
-        <div className="mt-3 flex flex-col gap-2 md:flex-row">
+        <div className="mt-glass-sm flex flex-col gap-glass-sm md:flex-row">
           <Input
             placeholder="user@example.com or username#123"
             value={searchTerm}
@@ -59,35 +59,35 @@ export const AddFriendsTab = ({
             Search
           </Button>
         </div>
-        <p className="mt-3 text-xs text-brutal-navy/70">
+        <p className="mt-glass-sm text-xs text-white/70">
           Search is case-insensitive and matches display name, username, or
           email.
         </p>
       </section>
 
-      <section className="space-y-4 rounded-3xl border-2 border-brutal-navy bg-white p-6 shadow-brutal-sm">
+      <section className="space-y-glass-sm rounded-glass border border-white/15 bg-white/15 p-glass-lg shadow-glass-soft backdrop-blur-glass">
         <header className="flex items-center justify-between">
-          <h3 className="text-base font-semibold text-brutal-navy">Results</h3>
-          <Button variant="ghost" size="sm" className="h-9 px-4 text-xs">
+          <h3 className="text-base font-semibold text-white">Results</h3>
+          <Button variant="ghost" size="sm" className="h-9 px-glass-sm text-xs">
             Invite by email
           </Button>
         </header>
-        <ul className="space-y-3">
+        <ul className="list-none space-y-glass-sm">
           {isSearching ? (
-            <li className="rounded-2xl border-2 border-dashed border-brutal-navy bg-brutal-blue/10 p-5 text-sm font-semibold text-brutal-navy">
+            <li className="rounded-glass border border-dashed border-white/25 bg-white/20 p-glass text-sm font-semibold text-white">
               Searching…
             </li>
           ) : potentialMatches.length ? (
             potentialMatches.map((match) => (
               <li
                 key={match.id}
-                className="flex items-center justify-between rounded-3xl border-2 border-brutal-navy bg-brutal-cream px-4 py-3 shadow-brutal-sm transition hover:-translate-y-0.5 hover:shadow-brutal"
+                className="flex items-center justify-between rounded-glass border border-white/20 bg-white/18 px-glass py-glass-sm shadow-glass-soft backdrop-blur-glass transition hover:-translate-y-0.5 hover:bg-white/25 hover:shadow-glass"
               >
                 <div>
-                  <p className="text-sm font-semibold text-brutal-navy">
+                  <p className="text-sm font-semibold text-white">
                     {match.displayName}
                   </p>
-                  <p className="text-xs text-brutal-navy/70">{match.handle}</p>
+                  <p className="text-xs text-white/70">{match.handle}</p>
                 </div>
                 <div className="flex items-center gap-3">
                   <Badge
@@ -106,7 +106,7 @@ export const AddFriendsTab = ({
                       match.status === "connected" ? "secondary" : "primary"
                     }
                     size="sm"
-                    className="h-9 px-3 text-xs"
+                    className="h-9 px-glass-sm text-xs"
                   >
                     {match.status === "connected"
                       ? "Message"
@@ -118,33 +118,33 @@ export const AddFriendsTab = ({
               </li>
             ))
           ) : searchTerm.trim() ? (
-            <li className="rounded-2xl border-2 border-dashed border-brutal-navy bg-brutal-pink/10 p-5 text-sm text-brutal-navy">
+            <li className="rounded-glass border border-dashed border-white/25 bg-white/20 p-glass text-sm text-white/80">
               No results yet. Try a different email or invite someone directly.
             </li>
           ) : (
-            <li className="rounded-2xl border-2 border-dashed border-brutal-navy bg-white p-5 text-sm text-brutal-navy/80">
+            <li className="rounded-glass border border-dashed border-white/20 bg-white/15 p-glass text-sm text-white/70">
               Start a search to find new friends.
             </li>
           )}
         </ul>
       </section>
 
-      <section className="space-y-3 rounded-3xl border-2 border-brutal-navy bg-white p-6 shadow-brutal-sm">
-        <h3 className="text-base font-semibold text-brutal-navy">
+      <section className="space-y-glass-sm rounded-glass border border-white/15 bg-white/15 p-glass-lg shadow-glass-soft backdrop-blur-glass">
+        <h3 className="text-base font-semibold text-white">
           Pending Requests (incoming)
         </h3>
-        <ul className="space-y-2">
+        <ul className="list-none space-y-glass-sm">
           {incomingRequests.length ? (
             incomingRequests.map((request) => (
               <li
                 key={request.id}
-                className="flex flex-wrap items-center justify-between gap-3 rounded-3xl border-2 border-brutal-navy bg-brutal-green/20 px-4 py-3 shadow-brutal-sm"
+                className="flex flex-wrap items-center justify-between gap-glass-sm rounded-glass border border-white/20 bg-white/18 px-glass py-glass-sm shadow-glass-soft backdrop-blur-glass"
               >
                 <div>
-                  <p className="text-sm font-semibold text-brutal-navy">
+                  <p className="text-sm font-semibold text-white">
                     {request.fromName}
                   </p>
-                  <p className="text-xs text-brutal-navy/70">
+                  <p className="text-xs text-white/70">
                     {request.message ?? "wants to connect"} •{" "}
                     {request.mutualCount} mutuals
                   </p>
@@ -153,14 +153,14 @@ export const AddFriendsTab = ({
                   <Button
                     variant="secondary"
                     size="sm"
-                    className="h-9 px-3 text-xs"
+                    className="h-9 px-glass-sm text-xs"
                   >
                     Accept
                   </Button>
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="h-9 px-3 text-xs"
+                    className="h-9 px-glass-sm text-xs"
                   >
                     Reject
                   </Button>
@@ -168,7 +168,7 @@ export const AddFriendsTab = ({
               </li>
             ))
           ) : (
-            <li className="rounded-2xl border-2 border-dashed border-brutal-navy bg-white p-5 text-sm text-brutal-navy/80">
+            <li className="rounded-glass border border-dashed border-white/20 bg-white/15 p-glass text-sm text-white/70">
               No incoming requests right now.
             </li>
           )}

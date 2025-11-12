@@ -614,7 +614,7 @@ export const PopupApp = () => {
   const renderActiveTab = () => {
     if (isLoading) {
       return (
-        <div className="flex h-full items-center justify-center text-sm text-brutal-navy/70">
+        <div className="flex h-full items-center justify-center text-sm text-white/70">
           Loading data…
         </div>
       );
@@ -622,11 +622,8 @@ export const PopupApp = () => {
 
     if (error) {
       return (
-        <div className="flex h-full flex-col items-center justify-center gap-4 text-center">
-          <p className="text-sm font-semibold text-danger-600">
-            We couldn’t load your data.
-          </p>
-          <p className="max-w-[260px] text-xs text-brutal-navy/70">{error}</p>
+        <div className="flex h-full flex-col items-center justify-center gap-glass-sm text-center">
+          <p className="text-sm font-semibold text-white">{error}</p>
           <Button size="sm" variant="secondary" onClick={() => void loadData()}>
             Retry
           </Button>
@@ -676,43 +673,43 @@ export const PopupApp = () => {
   };
 
   return (
-    <div className="relative flex h-[640px] w-[420px] flex-col gap-4 rounded-[36px] border-4 border-brutal-navy bg-brutal-cream p-6 text-brutal-navy shadow-brutal-lg">
-      <header className="flex items-center gap-3 rounded-3xl border-2 border-brutal-navy bg-brutal-yellow/70 p-4 shadow-brutal-sm">
-        <div className="flex flex-1 items-center gap-3 rounded-2xl border-2 border-brutal-navy bg-white px-3 py-2 shadow-brutal-sm">
-          <Search className="h-4 w-4 text-brutal-navy" aria-hidden />
+    <div className="relative flex h-[640px] w-[420px] flex-col gap-glass rounded-glass-lg border border-white/15 bg-white/12 p-glass-xl text-white shadow-glass backdrop-blur-glass">
+      <header className="flex items-center gap-glass-sm rounded-glass border border-white/20 bg-white/15 px-glass-md py-glass-sm shadow-glass-soft backdrop-blur-glass">
+        <div className="flex flex-1 items-center gap-glass-sm rounded-pill border border-white/20 bg-white/25 px-glass-sm py-glass-sm shadow-glass-soft backdrop-blur-glass">
+          <Search className="h-4 w-4 text-white/80" aria-hidden />
           <Input
             value={searchTerm}
             onChange={(event) => setSearchTerm(event.target.value)}
             placeholder="Search"
-            className="border-none px-0 shadow-none focus:ring-0 focus-visible:ring-0"
+            className="border-none px-0 shadow-none text-sm text-white placeholder:text-white/60 focus:ring-0 focus-visible:ring-0"
           />
         </div>
         <Button
           variant="secondary"
           size="sm"
-          className="h-10 w-10 rounded-2xl border-2 border-brutal-navy bg-white p-0"
+          className="h-10 w-10 rounded-pill bg-white/25 text-white shadow-glass-soft backdrop-blur-glass"
         >
           <Settings className="h-5 w-5" aria-hidden />
         </Button>
         <Button
           variant="ghost"
           size="sm"
-          className="h-10 w-10 rounded-2xl border-2 border-brutal-navy p-0"
+          className="h-10 w-10 rounded-pill border border-white/20 bg-transparent text-white"
         >
           <X className="h-5 w-5" aria-hidden />
         </Button>
       </header>
 
-      <nav className="grid grid-cols-3 gap-2 rounded-3xl border-2 border-brutal-navy bg-white p-1.5 shadow-brutal-sm">
+      <nav className="grid grid-cols-3 gap-glass-sm rounded-pill border border-white/15 bg-white/10 p-[6px] shadow-glass-soft backdrop-blur-glass">
         {tabs.map((tab) => (
           <button
             key={tab.id}
             type="button"
             onClick={() => setActiveTab(tab.id)}
             className={cn(
-              "rounded-2xl px-3 py-2 text-sm font-semibold text-brutal-navy transition hover:-translate-y-0.5 hover:bg-brutal-blue/30 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brutal-blue/40",
+              "rounded-pill px-glass-sm py-glass-sm text-sm font-semibold text-white/75 transition hover:-translate-y-0.5 hover:bg-white/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-glass-accent/40",
               activeTab === tab.id &&
-                "bg-brutal-yellow text-brutal-navy shadow-brutal-sm"
+                "bg-[linear-gradient(135deg,rgba(96,165,250,0.35),rgba(165,180,252,0.3))] text-white shadow-glass"
             )}
           >
             {tab.label}
@@ -720,24 +717,24 @@ export const PopupApp = () => {
         ))}
       </nav>
 
-      <main className="flex flex-1 flex-col rounded-3xl border-2 border-brutal-navy bg-white p-5 shadow-brutal">
+      <main className="flex flex-1 flex-col rounded-glass border border-white/15 bg-white/15 p-glass shadow-glass backdrop-blur-glass">
         {renderActiveTab()}
       </main>
 
-      <section className="space-y-3 rounded-3xl border-2 border-brutal-navy bg-white p-5 shadow-brutal">
+      <section className="space-y-glass-sm rounded-glass border border-white/15 bg-white/12 p-glass shadow-glass backdrop-blur-glass">
         <label className="flex flex-col gap-2 text-sm">
-          <span className="font-semibold text-brutal-navy">Message / Note</span>
+          <span className="font-semibold text-white/90">Message / Note</span>
           <textarea
             rows={3}
             value={note}
             onChange={(event) => setNote(event.target.value)}
             placeholder="Add a short note (optional)"
-            className="rounded-3xl border-2 border-brutal-navy bg-brutal-cream px-4 py-3 text-sm text-brutal-navy shadow-brutal-sm placeholder:text-brutal-navy/60 focus:border-brutal-navy focus:outline-none focus:ring-4 focus:ring-brutal-blue/40 focus:ring-offset-2 focus:ring-offset-brutal-cream"
+            className="rounded-glass border border-white/25 bg-white/18 px-glass-sm py-glass-sm text-sm text-white shadow-glass-soft backdrop-blur-glass placeholder:text-white/55 focus:border-white focus:outline-none focus:ring-2 focus:ring-glass-accent/40 focus:ring-offset-2 focus:ring-offset-white/10"
           />
         </label>
-        <div className="flex flex-wrap items-center gap-2">
-          <MessageSquare className="h-4 w-4 text-brutal-navy" aria-hidden />
-          <span className="text-xs font-semibold uppercase text-brutal-navy">
+        <div className="flex flex-wrap items-center gap-glass-sm">
+          <MessageSquare className="h-4 w-4 text-white/80" aria-hidden />
+          <span className="text-xs font-semibold uppercase text-white/70">
             Selected:
           </span>
           {selectedRecipients.length ? (
@@ -749,13 +746,11 @@ export const PopupApp = () => {
               />
             ))
           ) : (
-            <span className="text-xs text-brutal-navy/60">
-              No recipients yet.
-            </span>
+            <span className="text-xs text-white/60">No recipients yet.</span>
           )}
         </div>
         {sendError ? (
-          <p className="text-xs font-semibold text-danger-600">{sendError}</p>
+          <p className="text-xs font-semibold text-[#fca5a5]">{sendError}</p>
         ) : null}
         <Button
           className="w-full"

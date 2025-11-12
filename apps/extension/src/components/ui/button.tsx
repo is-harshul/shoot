@@ -4,20 +4,23 @@ import { forwardRef } from "react";
 import { cn } from "@/lib/cn";
 
 const buttonBase =
-  "inline-flex items-center justify-center gap-2 rounded-2xl border-2 border-brutal-navy bg-white px-4 font-semibold text-brutal-navy shadow-brutal transition-transform duration-150 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brutal-blue focus-visible:ring-offset-2 focus-visible:ring-offset-brutal-cream disabled:pointer-events-none disabled:opacity-60 hover:-translate-y-0.5 active:translate-y-0";
+  "inline-flex items-center justify-center gap-2 rounded-pill border border-white/40 bg-white/30 px-glass-sm py-2 font-semibold text-glass-slate900 shadow-glass backdrop-blur-glass transition-all duration-200 hover:bg-white/45 hover:shadow-glass-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-glass-accent/40 focus-visible:ring-offset-2 focus-visible:ring-offset-white/10 disabled:pointer-events-none disabled:opacity-60 hover:-translate-y-0.5 active:translate-y-0";
 
 const variantStyles = {
-  primary: "bg-brutal-yellow text-brutal-navy hover:bg-[#fbd94f]",
-  secondary: "bg-white text-brutal-navy hover:bg-brutal-blue/30",
+  primary:
+    "border-transparent bg-[linear-gradient(135deg,rgba(96,165,250,0.95),rgba(165,180,252,0.9))] text-white shadow-glass hover:shadow-glass-soft",
+  secondary:
+    "bg-white/40 text-glass-slate900 border-white/50 hover:bg-white/55",
   ghost:
-    "bg-transparent text-brutal-navy border-dashed hover:bg-brutal-blue/20",
-  subtle: "bg-brutal-pink text-brutal-navy hover:bg-brutal-pink/90",
+    "border border-transparent bg-transparent text-white hover:bg-white/15",
+  subtle:
+    "border border-white/30 bg-white/25 text-glass-slate900 hover:bg-white/35",
 } satisfies Record<string, string>;
 
 const sizeStyles = {
-  sm: "h-9 px-3 text-xs",
-  md: "h-10 px-5 text-sm",
-  lg: "h-12 px-6 text-base",
+  sm: "min-h-[36px] px-glass-sm text-xs",
+  md: "min-h-[40px] px-glass text-sm",
+  lg: "min-h-[48px] px-glass-lg text-base",
 } satisfies Record<string, string>;
 
 export type ButtonVariant = keyof typeof variantStyles;

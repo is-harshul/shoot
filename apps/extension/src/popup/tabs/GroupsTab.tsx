@@ -32,15 +32,19 @@ export const GroupsTab = ({
     : [];
 
   return (
-    <div className="flex h-full flex-col gap-4">
-      <header className="flex items-center justify-between rounded-3xl border-2 border-brutal-navy bg-brutal-pink/30 px-4 py-3 shadow-brutal-sm">
-        <h3 className="text-base font-semibold text-brutal-navy">Groups</h3>
-        <Button variant="secondary" size="sm" className="h-9 px-4 text-xs">
+    <div className="flex h-full flex-col gap-glass">
+      <header className="flex items-center justify-between rounded-glass border border-white/20 bg-white/18 px-glass py-glass-sm shadow-glass-soft backdrop-blur-glass">
+        <h3 className="text-base font-semibold text-white">Groups</h3>
+        <Button
+          variant="secondary"
+          size="sm"
+          className="h-9 px-glass-sm text-xs"
+        >
           Create Group +
         </Button>
       </header>
-      <div className="grid gap-4 md:grid-cols-2">
-        <aside className="space-y-3 overflow-y-auto pr-1">
+      <div className="grid gap-glass md:grid-cols-2">
+        <aside className="space-y-glass-sm overflow-y-auto pr-1">
           {groups.map((group) => {
             const isActive = activeGroup?.id === group.id;
             const isSelected = selectedRecipientIds.includes(group.id);
@@ -50,14 +54,14 @@ export const GroupsTab = ({
                 key={group.id}
                 type="button"
                 onClick={() => onSelectGroup(group.id)}
-                className="w-full rounded-3xl border-2 border-brutal-navy bg-brutal-cream p-4 text-left shadow-brutal-sm transition hover:-translate-y-0.5 hover:shadow-brutal focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brutal-blue/40"
+                className="w-full rounded-glass border border-white/20 bg-white/18 px-glass py-glass-sm text-left shadow-glass-soft backdrop-blur-glass transition hover:-translate-y-0.5 hover:bg-white/25 hover:shadow-glass focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-glass-accent/40"
               >
-                <div className="flex items-start justify-between gap-2">
+                <div className="flex items-start justify-between gap-glass-sm">
                   <div>
-                    <p className="text-sm font-semibold text-brutal-navy">
+                    <p className="text-sm font-semibold text-white">
                       {group.name}
                     </p>
-                    <p className="text-xs text-brutal-navy/70">
+                    <p className="text-xs text-white/70">
                       {group.memberCount} members
                     </p>
                   </div>
@@ -70,14 +74,14 @@ export const GroupsTab = ({
                     aria-label={`Select group ${group.name}`}
                   />
                 </div>
-                <p className="mt-2 line-clamp-2 text-xs text-brutal-navy/80">
+                <p className="mt-glass-sm line-clamp-2 text-xs text-white/75">
                   {group.lastPostPreview}
                 </p>
-                <p className="mt-1 text-xs text-brutal-navy/60">
+                <p className="mt-[6px] text-xs text-white/60">
                   Latest: {group.latestActivity}
                 </p>
                 {isActive ? (
-                  <span className="mt-3 inline-block rounded-full border-2 border-brutal-navy bg-brutal-yellow px-3 py-1 text-[10px] font-semibold uppercase text-brutal-navy shadow-brutal-sm">
+                  <span className="mt-glass-sm inline-block rounded-pill border border-white/20 bg-white/30 px-glass-sm py-[4px] text-[10px] font-semibold uppercase text-white/80">
                     Viewing
                   </span>
                 ) : null}
@@ -86,61 +90,65 @@ export const GroupsTab = ({
           })}
         </aside>
 
-        <section className="flex min-h-[260px] flex-col rounded-3xl border-2 border-brutal-navy bg-white p-6 shadow-brutal">
+        <section className="flex min-h-[260px] flex-col rounded-glass border border-white/15 bg-white/18 p-glass shadow-glass backdrop-blur-glass">
           {activeGroup ? (
             <>
               <header className="flex items-center justify-between">
                 <div>
-                  <p className="text-base font-semibold text-brutal-navy">
+                  <p className="text-base font-semibold text-white">
                     {activeGroup.name}
                   </p>
-                  <p className="text-xs text-brutal-navy/70">
+                  <p className="text-xs text-white/70">
                     {activeGroup.memberCount} members • Latest{" "}
                     {activeGroup.latestActivity}
                   </p>
                 </div>
-                <Button variant="ghost" size="sm" className="h-9 px-3 text-xs">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-9 px-glass-sm text-xs"
+                >
                   Settings
                 </Button>
               </header>
-              <div className="mt-4 flex-1 space-y-3 overflow-y-auto pr-1">
+              <div className="mt-glass-sm flex-1 space-y-glass-sm overflow-y-auto pr-1">
                 {isLoadingMessages && !groupMessages.length ? (
-                  <p className="text-sm text-brutal-navy/70">
+                  <p className="text-sm text-white/70">
                     Loading latest messages…
                   </p>
                 ) : groupMessages.length ? (
                   groupMessages.map((message) => (
                     <article
                       key={message.id}
-                      className="rounded-3xl border-2 border-brutal-navy bg-brutal-blue/20 p-4 shadow-brutal-sm"
+                      className="rounded-glass border border-white/20 bg-white/18 px-glass py-glass-sm shadow-glass-soft backdrop-blur-glass"
                     >
-                      <div className="flex items-center gap-2 text-xs text-brutal-navy/70">
-                        <span className="font-semibold text-brutal-navy">
+                      <div className="flex items-center gap-2 text-xs text-white/70">
+                        <span className="font-semibold text-white">
                           {message.author}
                         </span>
                         <span aria-hidden>•</span>
                         <span>{message.timestamp}</span>
                       </div>
-                      <p className="mt-2 break-words text-sm font-medium text-brutal-navy">
+                      <p className="mt-2 break-words text-sm font-medium text-white">
                         {message.content}
                       </p>
                     </article>
                   ))
                 ) : (
-                  <p className="text-sm text-brutal-navy/70">
+                  <p className="text-sm text-white/70">
                     No messages yet. Start the conversation!
                   </p>
                 )}
               </div>
-              <footer className="mt-4 flex items-center gap-3">
+              <footer className="mt-glass-sm flex items-center gap-glass-sm">
                 <Input placeholder="Message field" className="flex-1" />
-                <Button size="sm" className="h-10 px-4 text-xs">
+                <Button size="sm" className="h-10 px-glass-sm text-xs">
                   Send ▶︎
                 </Button>
               </footer>
             </>
           ) : (
-            <div className="flex flex-1 items-center justify-center rounded-2xl border-2 border-dashed border-brutal-navy bg-brutal-blue/10 text-sm text-brutal-navy/80">
+            <div className="flex flex-1 items-center justify-center rounded-glass border border-dashed border-white/20 bg-white/12 px-glass-md py-glass-sm text-sm text-white/70">
               Select a group to view activity.
             </div>
           )}

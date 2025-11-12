@@ -46,9 +46,9 @@ export const FriendsTab = ({
 
   if (!filteredFriends.length) {
     return (
-      <div className="flex flex-col items-center justify-center rounded-2xl border-2 border-brutal-navy bg-white px-6 py-10 text-center text-sm text-brutal-navy shadow-brutal-sm">
+      <div className="flex flex-col items-center justify-center rounded-glass border border-white/25 bg-white/20 px-glass-lg py-glass-xl text-center text-sm text-white shadow-glass-soft backdrop-blur-glass">
         <p className="font-semibold">No friends match “{searchTerm}”.</p>
-        <p className="mt-2 text-xs text-brutal-navy/70">
+        <p className="mt-2 text-xs text-white/70">
           Try searching by handle or invite someone new.
         </p>
       </div>
@@ -57,7 +57,7 @@ export const FriendsTab = ({
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
-      <ul className="flex-1 space-y-3 overflow-y-auto pr-1">
+      <ul className="flex-1 list-none space-y-glass-sm overflow-y-auto pr-1">
         {filteredFriends.map((friend) => {
           const presence = presenceMeta[friend.presence];
           const isDisabled =
@@ -67,7 +67,7 @@ export const FriendsTab = ({
           return (
             <li key={friend.id}>
               <label
-                className="flex cursor-pointer items-center gap-4 rounded-3xl border-2 border-brutal-navy bg-white p-4 shadow-brutal-sm transition hover:-translate-y-0.5 hover:shadow-brutal focus-within:border-brutal-navy/80"
+                className="flex cursor-pointer items-center gap-glass rounded-glass border border-white/25 bg-white/18 px-glass-sm py-glass-sm shadow-glass-soft backdrop-blur-glass transition hover:-translate-y-0.5 hover:bg-white/30 hover:shadow-glass focus-within:border-white/40"
                 aria-disabled={isDisabled}
               >
                 <Checkbox
@@ -89,7 +89,7 @@ export const FriendsTab = ({
                 />
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2">
-                    <p className="truncate text-sm font-semibold text-brutal-navy">
+                    <p className="truncate text-sm font-semibold text-white">
                       {friend.displayName}
                     </p>
                     {friend.isSaved ? (
@@ -102,7 +102,7 @@ export const FriendsTab = ({
                       </Badge>
                     )}
                   </div>
-                  <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-brutal-navy/70">
+                  <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-white/70">
                     <span>{friend.handle}</span>
                     {friend.lastSeen ? (
                       <Fragment>
@@ -123,12 +123,12 @@ export const FriendsTab = ({
           );
         })}
       </ul>
-      <footer className="mt-4 flex flex-wrap items-center justify-between gap-2 rounded-3xl border-2 border-brutal-navy bg-brutal-blue/20 p-4 shadow-brutal-sm">
-        <div className="flex items-center gap-2">
+      <footer className="mt-glass-sm flex flex-wrap items-center justify-between gap-glass-sm rounded-glass border border-white/20 bg-white/15 p-glass-sm shadow-glass-soft backdrop-blur-glass">
+        <div className="flex items-center gap-glass-sm">
           <Button
             variant="ghost"
             size="sm"
-            className="h-9 px-3 text-xs"
+            className="h-9 px-glass-sm text-xs"
             onClick={onSelectAll}
           >
             Select All
@@ -136,7 +136,7 @@ export const FriendsTab = ({
           <Button
             variant="ghost"
             size="sm"
-            className="h-9 px-3 text-xs"
+            className="h-9 px-glass-sm text-xs"
             onClick={onClearSelection}
           >
             Clear
@@ -145,7 +145,7 @@ export const FriendsTab = ({
         <Button
           variant="secondary"
           size="sm"
-          className="h-9 px-3 text-xs"
+          className="h-9 px-glass-sm text-xs"
           onClick={onCreateGroupFromSelection}
           disabled={selectedRecipientIds.length < 2}
         >

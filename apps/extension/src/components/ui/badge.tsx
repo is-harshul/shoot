@@ -4,12 +4,12 @@ import { cn } from "@/lib/cn";
 
 const badgeStyles = {
   neutral:
-    "bg-brutal-blue text-brutal-navy border-2 border-brutal-navy shadow-brutal-sm",
+    "bg-white/20 text-white border border-white/30 shadow-glass-soft backdrop-blur-glass",
   success:
-    "bg-brutal-green text-brutal-navy border-2 border-brutal-navy shadow-brutal-sm",
+    "bg-[rgba(34,197,94,0.25)] text-white border border-white/25 shadow-glass-soft backdrop-blur-glass",
   warning:
-    "bg-brutal-orange text-brutal-navy border-2 border-brutal-navy shadow-brutal-sm",
-  info: "bg-brutal-pink text-brutal-navy border-2 border-brutal-navy shadow-brutal-sm",
+    "bg-[rgba(250,204,21,0.25)] text-white border border-white/25 shadow-glass-soft backdrop-blur-glass",
+  info: "bg-[rgba(96,165,250,0.3)] text-white border border-white/30 shadow-glass-soft backdrop-blur-glass",
 };
 
 export type BadgeVariant = keyof typeof badgeStyles;
@@ -25,7 +25,7 @@ export const Badge = ({
 }: BadgeProps) => (
   <span
     className={cn(
-      "inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wide",
+      "inline-flex items-center rounded-pill px-glass-sm py-[6px] text-xs font-semibold uppercase tracking-wide",
       badgeStyles[variant],
       className
     )}
