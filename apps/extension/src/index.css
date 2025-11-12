@@ -14,9 +14,13 @@
   body {
     margin: 0;
     min-width: 320px;
-    background-color: rgba(248, 250, 252, 1);
+    background-color: #fdf7f2;
+    background-image: radial-gradient(#ffe8f8 1px, transparent 1px),
+      radial-gradient(#c6f5ff 1px, transparent 1px);
+    background-size: 28px 28px;
+    background-position: 0 0, 14px 14px;
     font-family: "Inter var", Inter, system-ui, sans-serif;
-    color: rgba(43, 55, 67, 1);
+    color: #1f1d2b;
   }
 
   #root {

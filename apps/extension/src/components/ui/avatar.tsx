@@ -16,9 +16,9 @@ const sizes = {
 } satisfies Record<string, string>;
 
 const statusColors: Record<NonNullable<AvatarProps["status"]>, string> = {
-  online: "bg-success-500",
-  offline: "bg-ink-400",
-  pending: "bg-warning-400",
+  online: "bg-brutal-green",
+  offline: "bg-brutal-navy/40",
+  pending: "bg-brutal-orange",
 };
 
 export const Avatar = ({
@@ -37,7 +37,13 @@ export const Avatar = ({
     .join("");
 
   return (
-    <div className={cn("relative inline-flex", className)} {...props}>
+    <div
+      className={cn(
+        "relative inline-flex rounded-full border-2 border-brutal-navy bg-white shadow-brutal-sm",
+        className
+      )}
+      {...props}
+    >
       {src ? (
         <img
           src={src}
@@ -45,14 +51,14 @@ export const Avatar = ({
           className={cn(
             "inline-flex rounded-full object-cover",
             sizes[size],
-            "border border-ink-100"
+            "border-2 border-brutal-navy"
           )}
         />
       ) : (
         <div
           aria-hidden
           className={cn(
-            "inline-flex select-none items-center justify-center rounded-full bg-primary-100 font-semibold text-primary-700",
+            "inline-flex select-none items-center justify-center rounded-full bg-brutal-yellow font-semibold text-brutal-navy",
             sizes[size]
           )}
         >

@@ -46,16 +46,18 @@ export const FriendsTab = ({
 
   if (!filteredFriends.length) {
     return (
-      <div className="flex flex-col items-center justify-center py-10 text-center text-sm text-ink-500">
-        <p>No friends match “{searchTerm}”.</p>
-        <p className="mt-1">Try searching by handle or invite someone new.</p>
+      <div className="flex flex-col items-center justify-center rounded-2xl border-2 border-brutal-navy bg-white px-6 py-10 text-center text-sm text-brutal-navy shadow-brutal-sm">
+        <p className="font-semibold">No friends match “{searchTerm}”.</p>
+        <p className="mt-2 text-xs text-brutal-navy/70">
+          Try searching by handle or invite someone new.
+        </p>
       </div>
     );
   }
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
-      <ul className="flex-1 space-y-2 overflow-y-auto pr-1">
+      <ul className="flex-1 space-y-3 overflow-y-auto pr-1">
         {filteredFriends.map((friend) => {
           const presence = presenceMeta[friend.presence];
           const isDisabled =
@@ -65,7 +67,7 @@ export const FriendsTab = ({
           return (
             <li key={friend.id}>
               <label
-                className="flex cursor-pointer items-center gap-3 rounded-2xl border border-transparent bg-white p-3 transition hover:border-primary-200 hover:bg-primary-50/40 focus-within:border-primary-300"
+                className="flex cursor-pointer items-center gap-4 rounded-3xl border-2 border-brutal-navy bg-white p-4 shadow-brutal-sm transition hover:-translate-y-0.5 hover:shadow-brutal focus-within:border-brutal-navy/80"
                 aria-disabled={isDisabled}
               >
                 <Checkbox
@@ -87,7 +89,7 @@ export const FriendsTab = ({
                 />
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2">
-                    <p className="truncate text-sm font-semibold text-ink-900">
+                    <p className="truncate text-sm font-semibold text-brutal-navy">
                       {friend.displayName}
                     </p>
                     {friend.isSaved ? (
@@ -100,7 +102,7 @@ export const FriendsTab = ({
                       </Badge>
                     )}
                   </div>
-                  <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-ink-500">
+                  <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-brutal-navy/70">
                     <span>{friend.handle}</span>
                     {friend.lastSeen ? (
                       <Fragment>
@@ -121,7 +123,7 @@ export const FriendsTab = ({
           );
         })}
       </ul>
-      <footer className="mt-3 flex flex-wrap items-center justify-between gap-2 rounded-2xl bg-white p-3 shadow-soft">
+      <footer className="mt-4 flex flex-wrap items-center justify-between gap-2 rounded-3xl border-2 border-brutal-navy bg-brutal-blue/20 p-4 shadow-brutal-sm">
         <div className="flex items-center gap-2">
           <Button
             variant="ghost"

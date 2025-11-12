@@ -1,7 +1,10 @@
 import {
   FriendRequestSchema,
+  GroupIdSchema,
   GroupSchema,
   MessageSchema,
+  MessageTypeSchema,
+  UserIdSchema,
   UserSchema,
 } from "@shoot/shared";
 import { z } from "zod";
@@ -43,4 +46,34 @@ export const GroupMessagesResponseSchema = z.object({
 
 export const UsersSearchResponseSchema = z.object({
   users: z.array(UserSchema),
+});
+
+const BaseSendMessagePayloadSchema = z.object({
+  content: z.string().min(1).max(2048),
+  note: z.string().max(512).optional().nullable(),
+  type: MessageTypeSchema.default("link"),
+});
+
+export const SendMessagePayloadSchema = z.discriminatedUnion("targetType", [
+  z
+    .object({
+      targetType: z.literal("user"),
+      targetId: UserIdSchema,
+    })
+    .merge(BaseSendMessagePayloadSchema),
+  z
+    .object({
+      targetType: z.literal("group"),
+      targetId: GroupIdSchema,
+    })
+    .merge(BaseSendMessagePayloadSchema),
+  z
+    .object({
+      targetType: z.literal("saved"),
+    })
+    .merge(BaseSendMessagePayloadSchema),
+]);
+
+export const SendMessageResponseSchema = z.object({
+  message: MessageSchema,
 });

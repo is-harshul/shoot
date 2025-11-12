@@ -189,6 +189,8 @@ export const PopupApp = () => {
   const [selectedRecipients, setSelectedRecipients] = useState<Recipient[]>([]);
   const [selectedGroupId, setSelectedGroupId] = useState<string | null>(null);
   const [knownUsers, setKnownUsers] = useState<Record<string, User>>({});
+  const [isSending, setIsSending] = useState(false);
+  const [sendError, setSendError] = useState<string | null>(null);
 
   const selectedRecipientIds = useMemo(
     () => selectedRecipients.map((recipient) => recipient.id),
@@ -359,13 +361,26 @@ export const PopupApp = () => {
     console.info("[popup] create group from selection", selectedRecipients);
   };
 
-  const handleSend = () => {
-    console.info("[popup] send link", {
-      recipients: selectedRecipients,
-      note: note.trim(),
-    });
-    setNote("");
-  };
+  const getActiveTabUrl = useCallback(async (): Promise<string | null> => {
+    if (typeof chrome !== "undefined" && chrome.tabs?.query) {
+      return new Promise((resolve) => {
+        try {
+          chrome.tabs.query({ active: true, currentWindow: true }, (tabs) =>
+            resolve(tabs?.[0]?.url ?? null)
+          );
+        } catch (err) {
+          console.error("[popup] failed to query active tab", err);
+          resolve(null);
+        }
+      });
+    }
+
+    if (typeof window !== "undefined" && window.location) {
+      return window.location.href;
+    }
+
+    return null;
+  }, []);
 
   const handleSelectGroup = useCallback(
     (groupId: string) => {
@@ -535,10 +550,71 @@ export const PopupApp = () => {
     };
   }, [loadData]);
 
+  const handleSend = useCallback(async () => {
+    if (!selectedRecipients.length) {
+      setSendError("Select at least one recipient before sending.");
+      return;
+    }
+
+    setIsSending(true);
+    setSendError(null);
+
+    try {
+      const activeUrl = await getActiveTabUrl();
+      const trimmedNote = note.trim();
+      const hasUrl = typeof activeUrl === "string" && activeUrl.length > 0;
+
+      const content = hasUrl
+        ? activeUrl
+        : trimmedNote.length
+        ? trimmedNote
+        : "Shared via Shoot";
+      const type = hasUrl ? "link" : "text";
+      const noteValue = hasUrl && trimmedNote.length ? trimmedNote : undefined;
+
+      for (const recipient of selectedRecipients) {
+        if (recipient.kind === "group") {
+          await api.sendMessage({
+            targetType: "group",
+            targetId: recipient.id,
+            content,
+            note: noteValue,
+            type,
+          });
+        } else if (recipient.kind === "saved") {
+          await api.sendMessage({
+            targetType: "saved",
+            content,
+            note: noteValue,
+            type,
+          });
+        } else {
+          await api.sendMessage({
+            targetType: "user",
+            targetId: recipient.id,
+            content,
+            note: noteValue,
+            type,
+          });
+        }
+      }
+
+      setNote("");
+      void loadData();
+    } catch (err) {
+      const message =
+        err instanceof ApiError ? err.message : "Failed to send message.";
+      setSendError(message);
+      console.error("[popup] failed to send message", err);
+    } finally {
+      setIsSending(false);
+    }
+  }, [selectedRecipients, getActiveTabUrl, note, loadData]);
+
   const renderActiveTab = () => {
     if (isLoading) {
       return (
-        <div className="flex h-full items-center justify-center text-sm text-ink-500">
+        <div className="flex h-full items-center justify-center text-sm text-brutal-navy/70">
           Loading data…
         </div>
       );
@@ -546,11 +622,11 @@ export const PopupApp = () => {
 
     if (error) {
       return (
-        <div className="flex h-full flex-col items-center justify-center gap-3 text-center">
+        <div className="flex h-full flex-col items-center justify-center gap-4 text-center">
           <p className="text-sm font-semibold text-danger-600">
             We couldn’t load your data.
           </p>
-          <p className="max-w-[260px] text-xs text-ink-500">{error}</p>
+          <p className="max-w-[260px] text-xs text-brutal-navy/70">{error}</p>
           <Button size="sm" variant="secondary" onClick={() => void loadData()}>
             Retry
           </Button>
@@ -600,35 +676,43 @@ export const PopupApp = () => {
   };
 
   return (
-    <div className="flex h-[640px] w-[420px] flex-col gap-3 bg-ink-100/80 p-4 text-ink-900">
-      <header className="flex items-center gap-3 rounded-2.5xl bg-white p-3 shadow-soft">
-        <div className="flex flex-1 items-center gap-2 rounded-2xl border border-ink-200 pl-3 pr-2">
-          <Search className="h-4 w-4 text-ink-400" aria-hidden />
+    <div className="relative flex h-[640px] w-[420px] flex-col gap-4 rounded-[36px] border-4 border-brutal-navy bg-brutal-cream p-6 text-brutal-navy shadow-brutal-lg">
+      <header className="flex items-center gap-3 rounded-3xl border-2 border-brutal-navy bg-brutal-yellow/70 p-4 shadow-brutal-sm">
+        <div className="flex flex-1 items-center gap-3 rounded-2xl border-2 border-brutal-navy bg-white px-3 py-2 shadow-brutal-sm">
+          <Search className="h-4 w-4 text-brutal-navy" aria-hidden />
           <Input
             value={searchTerm}
             onChange={(event) => setSearchTerm(event.target.value)}
             placeholder="Search"
-            className="border-0 px-0 focus:ring-0"
+            className="border-none px-0 shadow-none focus:ring-0 focus-visible:ring-0"
           />
         </div>
-        <Button variant="ghost" size="sm" className="h-10 w-10 rounded-2xl">
+        <Button
+          variant="secondary"
+          size="sm"
+          className="h-10 w-10 rounded-2xl border-2 border-brutal-navy bg-white p-0"
+        >
           <Settings className="h-5 w-5" aria-hidden />
         </Button>
-        <Button variant="ghost" size="sm" className="h-10 w-10 rounded-2xl">
+        <Button
+          variant="ghost"
+          size="sm"
+          className="h-10 w-10 rounded-2xl border-2 border-brutal-navy p-0"
+        >
           <X className="h-5 w-5" aria-hidden />
         </Button>
       </header>
 
-      <nav className="grid grid-cols-3 gap-2 rounded-2xl bg-white p-1">
+      <nav className="grid grid-cols-3 gap-2 rounded-3xl border-2 border-brutal-navy bg-white p-1.5 shadow-brutal-sm">
         {tabs.map((tab) => (
           <button
             key={tab.id}
             type="button"
             onClick={() => setActiveTab(tab.id)}
             className={cn(
-              "rounded-2xl px-3 py-2 text-sm font-semibold text-ink-500 transition hover:bg-primary-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-300",
+              "rounded-2xl px-3 py-2 text-sm font-semibold text-brutal-navy transition hover:-translate-y-0.5 hover:bg-brutal-blue/30 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brutal-blue/40",
               activeTab === tab.id &&
-                "bg-primary-100 text-primary-700 shadow-soft"
+                "bg-brutal-yellow text-brutal-navy shadow-brutal-sm"
             )}
           >
             {tab.label}
@@ -636,24 +720,26 @@ export const PopupApp = () => {
         ))}
       </nav>
 
-      <main className="flex flex-1 flex-col rounded-2.5xl bg-white p-4 shadow-soft">
+      <main className="flex flex-1 flex-col rounded-3xl border-2 border-brutal-navy bg-white p-5 shadow-brutal">
         {renderActiveTab()}
       </main>
 
-      <section className="space-y-3 rounded-2.5xl bg-white p-4 shadow-soft">
+      <section className="space-y-3 rounded-3xl border-2 border-brutal-navy bg-white p-5 shadow-brutal">
         <label className="flex flex-col gap-2 text-sm">
-          <span className="font-medium text-ink-700">Message / Note</span>
+          <span className="font-semibold text-brutal-navy">Message / Note</span>
           <textarea
             rows={3}
             value={note}
             onChange={(event) => setNote(event.target.value)}
             placeholder="Add a short note (optional)"
-            className="rounded-2xl border border-ink-200 bg-white px-3 py-2 text-sm text-ink-900 placeholder:text-ink-400 focus:border-primary-300 focus:outline-none focus:ring-2 focus:ring-primary-200"
+            className="rounded-3xl border-2 border-brutal-navy bg-brutal-cream px-4 py-3 text-sm text-brutal-navy shadow-brutal-sm placeholder:text-brutal-navy/60 focus:border-brutal-navy focus:outline-none focus:ring-4 focus:ring-brutal-blue/40 focus:ring-offset-2 focus:ring-offset-brutal-cream"
           />
         </label>
         <div className="flex flex-wrap items-center gap-2">
-          <MessageSquare className="h-4 w-4 text-ink-400" aria-hidden />
-          <span className="text-xs text-ink-500">Selected:</span>
+          <MessageSquare className="h-4 w-4 text-brutal-navy" aria-hidden />
+          <span className="text-xs font-semibold uppercase text-brutal-navy">
+            Selected:
+          </span>
           {selectedRecipients.length ? (
             selectedRecipients.map((recipient) => (
               <RecipientChip
@@ -663,17 +749,22 @@ export const PopupApp = () => {
               />
             ))
           ) : (
-            <span className="text-xs text-ink-400">No recipients yet.</span>
+            <span className="text-xs text-brutal-navy/60">
+              No recipients yet.
+            </span>
           )}
         </div>
+        {sendError ? (
+          <p className="text-xs font-semibold text-danger-600">{sendError}</p>
+        ) : null}
         <Button
           className="w-full"
           size="lg"
-          onClick={handleSend}
-          disabled={!selectedRecipients.length}
+          onClick={() => void handleSend()}
+          disabled={!selectedRecipients.length || isSending}
         >
           <Send className="h-4 w-4" />
-          Send ▶︎
+          {isSending ? "Sending…" : "Send ▶︎"}
         </Button>
       </section>
     </div>

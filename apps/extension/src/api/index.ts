@@ -7,11 +7,14 @@ import {
   GroupMessagesResponseSchema,
   GroupsResponseSchema,
   MeResponseSchema,
+  SendMessagePayloadSchema,
+  SendMessageResponseSchema,
   UsersSearchResponseSchema,
 } from "@/api/schemas";
 import { request } from "@/api/client";
 
 export type FriendRequestWithUser = z.infer<typeof FriendRequestWithUserSchema>;
+export type SendMessagePayload = z.infer<typeof SendMessagePayloadSchema>;
 
 export const api = {
   getCurrentUser: () => request("/users/me", MeResponseSchema),
@@ -26,4 +29,9 @@ export const api = {
       `/users/search?q=${encodeURIComponent(query)}&limit=${limit}`,
       UsersSearchResponseSchema
     ),
+  sendMessage: (payload: SendMessagePayload) =>
+    request("/messages/send", SendMessageResponseSchema, {
+      method: "POST",
+      body: JSON.stringify(SendMessagePayloadSchema.parse(payload)),
+    }),
 };

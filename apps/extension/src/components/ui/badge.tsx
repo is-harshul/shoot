@@ -3,10 +3,13 @@ import type { HTMLAttributes } from "react";
 import { cn } from "@/lib/cn";
 
 const badgeStyles = {
-  neutral: "bg-ink-100 text-ink-700",
-  success: "bg-success-100 text-success-700",
-  warning: "bg-warning-100 text-warning-700",
-  info: "bg-primary-100 text-primary-700",
+  neutral:
+    "bg-brutal-blue text-brutal-navy border-2 border-brutal-navy shadow-brutal-sm",
+  success:
+    "bg-brutal-green text-brutal-navy border-2 border-brutal-navy shadow-brutal-sm",
+  warning:
+    "bg-brutal-orange text-brutal-navy border-2 border-brutal-navy shadow-brutal-sm",
+  info: "bg-brutal-pink text-brutal-navy border-2 border-brutal-navy shadow-brutal-sm",
 };
 
 export type BadgeVariant = keyof typeof badgeStyles;
@@ -22,7 +25,7 @@ export const Badge = ({
 }: BadgeProps) => (
   <span
     className={cn(
-      "inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium",
+      "inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wide",
       badgeStyles[variant],
       className
     )}

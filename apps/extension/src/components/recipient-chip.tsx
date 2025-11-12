@@ -12,7 +12,7 @@ export interface RecipientChipProps {
 export const RecipientChip = ({ label, onRemove }: RecipientChipProps) => (
   <span
     className={cn(
-      "inline-flex items-center gap-1 rounded-full bg-primary-100 px-3 py-1 text-xs font-medium text-primary-700"
+      "inline-flex items-center gap-2 rounded-full border-2 border-brutal-navy bg-brutal-pink px-4 py-1.5 text-xs font-semibold uppercase tracking-wide text-brutal-navy shadow-brutal-sm"
     )}
   >
     {label}
@@ -20,7 +20,7 @@ export const RecipientChip = ({ label, onRemove }: RecipientChipProps) => (
       <button
         aria-label={`Remove ${label}`}
         type="button"
-        className="inline-flex h-5 w-5 items-center justify-center rounded-full text-primary-600 transition hover:bg-primary-200/70"
+        className="inline-flex h-6 w-6 items-center justify-center rounded-full border-2 border-brutal-navy bg-white text-brutal-navy transition hover:-translate-y-0.5 hover:bg-brutal-yellow"
         onClick={onRemove}
       >
         <X className="h-3 w-3" />

@@ -5,6 +5,15 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        brutal: {
+          cream: "#FDF7F2",
+          navy: "#1F1D2B",
+          yellow: "#FEEA60",
+          blue: "#8EE7FF",
+          pink: "#FF8AC2",
+          orange: "#FFB049",
+          green: "#9CFFB0",
+        },
         ink: {
           50: "#f8fafc",
           100: "#ecf2f8",
@@ -76,6 +85,9 @@ const config: Config = {
       },
       boxShadow: {
         soft: "0 12px 32px rgba(29, 41, 57, 0.15)",
+        brutal: "6px 6px 0 0 rgba(31, 29, 43, 0.85)",
+        "brutal-sm": "4px 4px 0 0 rgba(31, 29, 43, 0.75)",
+        "brutal-lg": "8px 8px 0 0 rgba(31, 29, 43, 0.9)",
       },
       fontFamily: {
         sans: ['"Inter var"', "Inter", "system-ui", "sans-serif"],
