@@ -11,5 +11,6 @@
 - **2025-11-13 @ 00:14 IST** – Scaffolded workspace structure (extension, backend, shared packages) with TypeScript configs and installed dependencies; ready to build extension UI skeleton.
 - **2025-11-13 @ 00:26 IST** – Built extension popup UI skeleton (React + Tailwind), tabs per wireframe with mock data, FAB content script, and background worker stub; workspace typecheck passing.
 - **2025-11-13 @ 00:38 IST** – Fixed Tailwind PostCSS config by adding `@tailwindcss/postcss`, clearing dev build error.
+- **2025-11-13 @ 00:46 IST** – Implemented backend placeholder API (auth, users, friends, groups, messages) with mock data, CORS, and health checks; typecheck green across workspaces.
 
 
