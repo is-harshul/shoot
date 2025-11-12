@@ -12,6 +12,9 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": fileURLToPath(new URL("./src", import.meta.url)),
+      "@shoot/shared": fileURLToPath(
+        new URL("../../packages/shared/src/index.ts", import.meta.url)
+      ),
     },
   },
   build: {

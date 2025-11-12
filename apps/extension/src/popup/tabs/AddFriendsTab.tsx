@@ -1,15 +1,15 @@
-import { useMemo } from "react";
-
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import type { IncomingRequest, PotentialFriend } from "@/mocks/popup-data";
+import type { IncomingRequest, PotentialFriend } from "@/features/popup/types";
 
 export interface AddFriendsTabProps {
   searchTerm: string;
   onSearchTermChange: (value: string) => void;
   potentialMatches: PotentialFriend[];
   incomingRequests: IncomingRequest[];
+  onSearch: () => void;
+  isSearching: boolean;
 }
 
 const statusLabel: Record<PotentialFriend["status"], string> = {
@@ -23,16 +23,14 @@ export const AddFriendsTab = ({
   onSearchTermChange,
   potentialMatches,
   incomingRequests,
+  onSearch,
+  isSearching,
 }: AddFriendsTabProps) => {
-  const filteredMatches = useMemo(() => {
-    const normalized = searchTerm.trim().toLowerCase();
-    if (!normalized.length) return potentialMatches;
-    return potentialMatches.filter(
-      (friend) =>
-        friend.displayName.toLowerCase().includes(normalized) ||
-        friend.handle.toLowerCase().includes(normalized)
-    );
-  }, [potentialMatches, searchTerm]);
+  const handleSubmit = () => {
+    if (searchTerm.trim()) {
+      onSearch();
+    }
+  };
 
   return (
     <div className="flex h-full flex-col gap-4">
@@ -46,11 +44,25 @@ export const AddFriendsTab = ({
             value={searchTerm}
             onChange={(event) => onSearchTermChange(event.target.value)}
             aria-label="Search by email or user ID"
+            onKeyDown={(event) => {
+              if (event.key === "Enter") {
+                event.preventDefault();
+                handleSubmit();
+              }
+            }}
           />
-          <Button className="md:w-32" disabled={!searchTerm.trim()}>
+          <Button
+            className="md:w-32"
+            disabled={!searchTerm.trim() || isSearching}
+            onClick={handleSubmit}
+          >
             Search
           </Button>
         </div>
+        <p className="mt-2 text-xs text-ink-500">
+          Search is case-insensitive and matches display name, username, or
+          email.
+        </p>
       </section>
 
       <section className="space-y-3 rounded-2xl bg-white p-4 shadow-soft">
@@ -61,8 +73,12 @@ export const AddFriendsTab = ({
           </Button>
         </header>
         <ul className="space-y-2">
-          {filteredMatches.length ? (
-            filteredMatches.map((match) => (
+          {isSearching ? (
+            <li className="rounded-xl border border-dashed border-ink-200 p-4 text-sm text-ink-500">
+              Searching…
+            </li>
+          ) : potentialMatches.length ? (
+            potentialMatches.map((match) => (
               <li
                 key={match.id}
                 className="flex items-center justify-between rounded-xl border border-ink-200 px-3 py-2 transition hover:border-primary-200 hover:bg-primary-50/40"
@@ -101,9 +117,13 @@ export const AddFriendsTab = ({
                 </div>
               </li>
             ))
-          ) : (
+          ) : searchTerm.trim() ? (
             <li className="rounded-xl border border-dashed border-ink-200 p-4 text-sm text-ink-500">
               No results yet. Try a different email or invite someone directly.
+            </li>
+          ) : (
+            <li className="rounded-xl border border-dashed border-ink-200 p-4 text-sm text-ink-500">
+              Start a search to find new friends.
             </li>
           )}
         </ul>

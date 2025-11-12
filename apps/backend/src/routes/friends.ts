@@ -1,4 +1,4 @@
-import type { User } from "@shoot/shared";
+import type { FriendRequest, User } from "@shoot/shared";
 import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
 
@@ -19,20 +19,28 @@ friendsRoutes.get("/", (c) => {
 });
 
 friendsRoutes.get("/requests", (c) => {
-  const incoming = mockFriendRequests.filter(
-    (request) =>
-      request.toUser === CURRENT_USER_ID && request.status === "pending"
-  );
+  const enrich = (request: FriendRequest) => {
+    const otherUserId =
+      request.fromUser === CURRENT_USER_ID ? request.toUser : request.fromUser;
+    const user = mockUsers.find((entry) => entry.id === otherUserId) ?? null;
+    return { request, user };
+  };
 
-  const outgoing = mockFriendRequests.filter(
-    (request) =>
-      request.fromUser === CURRENT_USER_ID && request.status === "pending"
-  );
+  const incoming = mockFriendRequests
+    .filter(
+      (request) =>
+        request.toUser === CURRENT_USER_ID && request.status === "pending"
+    )
+    .map(enrich);
 
-  return c.json({
-    incoming,
-    outgoing,
-  });
+  const outgoing = mockFriendRequests
+    .filter(
+      (request) =>
+        request.fromUser === CURRENT_USER_ID && request.status === "pending"
+    )
+    .map(enrich);
+
+  return c.json({ incoming, outgoing });
 });
 
 friendsRoutes.post("/requests/:requestId/accept", (c) => {

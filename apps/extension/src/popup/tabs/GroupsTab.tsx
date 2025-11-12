@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import type { GroupMessage, GroupSummary } from "@/mocks/popup-data";
+import type { GroupMessage, GroupSummary } from "@/features/popup/types";
 
 export interface GroupsTabProps {
   groups: GroupSummary[];
@@ -9,6 +9,7 @@ export interface GroupsTabProps {
   selectedRecipientIds: string[];
   onSelectGroup: (groupId: string) => void;
   onToggleRecipient: (group: GroupSummary) => void;
+  isLoadingMessages: boolean;
 }
 
 export const GroupsTab = ({
@@ -18,6 +19,7 @@ export const GroupsTab = ({
   selectedRecipientIds,
   onSelectGroup,
   onToggleRecipient,
+  isLoadingMessages,
 }: GroupsTabProps) => {
   const activeGroup =
     selectedGroupId !== null
@@ -101,7 +103,11 @@ export const GroupsTab = ({
                 </Button>
               </header>
               <div className="mt-3 flex-1 space-y-3 overflow-y-auto pr-1">
-                {groupMessages.length ? (
+                {isLoadingMessages && !groupMessages.length ? (
+                  <p className="text-sm text-ink-500">
+                    Loading latest messages…
+                  </p>
+                ) : groupMessages.length ? (
                   groupMessages.map((message) => (
                     <article
                       key={message.id}
