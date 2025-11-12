@@ -1,0 +1,23 @@
+{
+  "name": "shoot",
+  "private": true,
+  "version": "0.1.0",
+  "packageManager": "npm@10.9.0",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:extension": "npm run dev --workspace extension",
+    "build:extension": "npm run build --workspace extension",
+    "lint:extension": "npm run lint --workspace extension",
+    "dev:backend": "npm run dev --workspace backend",
+    "build:backend": "npm run build --workspace backend",
+    "typecheck": "npm run typecheck --workspaces",
+    "clean": "rimraf node_modules apps/**/node_modules packages/**/node_modules"
+  },
+  "devDependencies": {
+    "rimraf": "^5.0.10",
+    "typescript": "~5.9.3"
+  }
+}
