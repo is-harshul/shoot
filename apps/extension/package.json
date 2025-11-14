@@ -11,6 +11,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@fontsource-variable/inter": "^5.1.0",
     "@shoot/shared": "file:../../packages/shared",
     "clsx": "^2.1.1",
     "lucide-react": "^0.553.0",

@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import type { GroupMessage, GroupSummary } from "@/features/popup/types";
+import { cn } from "@/lib/cn";
 
 export interface GroupsTabProps {
   groups: GroupSummary[];
@@ -32,19 +33,15 @@ export const GroupsTab = ({
     : [];
 
   return (
-    <div className="flex h-full flex-col gap-glass">
-      <header className="flex items-center justify-between rounded-glass border border-white/20 bg-white/18 px-glass py-glass-sm shadow-glass-soft backdrop-blur-glass">
+    <div className="flex h-full flex-col gap-5">
+      <header className="glass-panel-sm flex items-center justify-between bg-white/[0.12]">
         <h3 className="text-base font-semibold text-white">Groups</h3>
-        <Button
-          variant="secondary"
-          size="sm"
-          className="h-9 px-glass-sm text-xs"
-        >
+        <Button variant="secondary" size="sm">
           Create Group +
         </Button>
       </header>
-      <div className="grid gap-glass md:grid-cols-2">
-        <aside className="space-y-glass-sm overflow-y-auto pr-1">
+      <div className="grid gap-5 md:grid-cols-2">
+        <aside className="thin-scrollbar space-y-3 overflow-y-auto pr-1 scroll-smooth-touch">
           {groups.map((group) => {
             const isActive = activeGroup?.id === group.id;
             const isSelected = selectedRecipientIds.includes(group.id);
@@ -54,9 +51,13 @@ export const GroupsTab = ({
                 key={group.id}
                 type="button"
                 onClick={() => onSelectGroup(group.id)}
-                className="w-full rounded-glass border border-white/20 bg-white/18 px-glass py-glass-sm text-left shadow-glass-soft backdrop-blur-glass transition hover:-translate-y-0.5 hover:bg-white/25 hover:shadow-glass focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-glass-accent/40"
+                className={cn(
+                  "glass-card w-full text-left",
+                  isActive && "border-white/35 bg-white/20 shadow-glass",
+                  isSelected && "ring-1 ring-glass-accent/60"
+                )}
               >
-                <div className="flex items-start justify-between gap-glass-sm">
+                <div className="flex items-start justify-between gap-4">
                   <div>
                     <p className="text-sm font-semibold text-white">
                       {group.name}
@@ -74,14 +75,14 @@ export const GroupsTab = ({
                     aria-label={`Select group ${group.name}`}
                   />
                 </div>
-                <p className="mt-glass-sm line-clamp-2 text-xs text-white/75">
+                <p className="mt-2 line-clamp-2 text-xs text-white/75">
                   {group.lastPostPreview}
                 </p>
                 <p className="mt-[6px] text-xs text-white/60">
                   Latest: {group.latestActivity}
                 </p>
                 {isActive ? (
-                  <span className="mt-glass-sm inline-block rounded-pill border border-white/20 bg-white/30 px-glass-sm py-[4px] text-[10px] font-semibold uppercase text-white/80">
+                  <span className="mt-3 inline-block rounded-full border border-white/20 bg-white/30 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-white/80">
                     Viewing
                   </span>
                 ) : null}
@@ -90,7 +91,7 @@ export const GroupsTab = ({
           })}
         </aside>
 
-        <section className="flex min-h-[260px] flex-col rounded-glass border border-white/15 bg-white/18 p-glass shadow-glass backdrop-blur-glass">
+        <section className="glass-panel flex min-h-[260px] flex-col gap-4">
           {activeGroup ? (
             <>
               <header className="flex items-center justify-between">
@@ -103,25 +104,18 @@ export const GroupsTab = ({
                     {activeGroup.latestActivity}
                   </p>
                 </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-9 px-glass-sm text-xs"
-                >
+                <Button variant="ghost" size="sm">
                   Settings
                 </Button>
               </header>
-              <div className="mt-glass-sm flex-1 space-y-glass-sm overflow-y-auto pr-1">
+              <div className="thin-scrollbar flex-1 space-y-3 overflow-y-auto pr-1 scroll-smooth-touch">
                 {isLoadingMessages && !groupMessages.length ? (
                   <p className="text-sm text-white/70">
                     Loading latest messages…
                   </p>
                 ) : groupMessages.length ? (
                   groupMessages.map((message) => (
-                    <article
-                      key={message.id}
-                      className="rounded-glass border border-white/20 bg-white/18 px-glass py-glass-sm shadow-glass-soft backdrop-blur-glass"
-                    >
+                    <article key={message.id} className="glass-card space-y-2">
                       <div className="flex items-center gap-2 text-xs text-white/70">
                         <span className="font-semibold text-white">
                           {message.author}
@@ -140,15 +134,16 @@ export const GroupsTab = ({
                   </p>
                 )}
               </div>
-              <footer className="mt-glass-sm flex items-center gap-glass-sm">
-                <Input placeholder="Message field" className="flex-1" />
-                <Button size="sm" className="h-10 px-glass-sm text-xs">
-                  Send ▶︎
-                </Button>
+              <footer className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
+                <Input
+                  placeholder="Message field"
+                  className="flex-1 border-white/15 bg-white/8"
+                />
+                <Button size="sm">Send ▶︎</Button>
               </footer>
             </>
           ) : (
-            <div className="flex flex-1 items-center justify-center rounded-glass border border-dashed border-white/20 bg-white/12 px-glass-md py-glass-sm text-sm text-white/70">
+            <div className="glass-panel-sm flex flex-1 items-center justify-center border border-dashed border-white/25 bg-white/8 text-sm text-white/70">
               Select a group to view activity.
             </div>
           )}

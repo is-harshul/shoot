@@ -33,12 +33,15 @@ export const AddFriendsTab = ({
   };
 
   return (
-    <div className="flex h-full flex-col gap-glass-lg">
-      <section className="rounded-glass border border-white/20 bg-white/20 p-glass-lg shadow-glass backdrop-blur-glass">
-        <h3 className="text-base font-semibold text-white">
-          Find users by User ID or Email
-        </h3>
-        <div className="mt-glass-sm flex flex-col gap-glass-sm md:flex-row">
+    <div className="flex h-full flex-col gap-5">
+      <section className="glass-panel space-y-4 bg-white/[0.12]">
+        <div>
+          <p className="section-title">Add friends</p>
+          <h3 className="text-lg font-semibold text-white">
+            Find users by User ID or email
+          </h3>
+        </div>
+        <div className="flex flex-col gap-3 md:flex-row">
           <Input
             placeholder="user@example.com or username#123"
             value={searchTerm}
@@ -59,29 +62,29 @@ export const AddFriendsTab = ({
             Search
           </Button>
         </div>
-        <p className="mt-glass-sm text-xs text-white/70">
+        <p className="text-xs text-white/65">
           Search is case-insensitive and matches display name, username, or
           email.
         </p>
       </section>
 
-      <section className="space-y-glass-sm rounded-glass border border-white/15 bg-white/15 p-glass-lg shadow-glass-soft backdrop-blur-glass">
+      <section className="glass-panel space-y-4">
         <header className="flex items-center justify-between">
           <h3 className="text-base font-semibold text-white">Results</h3>
-          <Button variant="ghost" size="sm" className="h-9 px-glass-sm text-xs">
+          <Button variant="ghost" size="sm">
             Invite by email
           </Button>
         </header>
-        <ul className="list-none space-y-glass-sm">
+        <ul className="list-none space-y-3">
           {isSearching ? (
-            <li className="rounded-glass border border-dashed border-white/25 bg-white/20 p-glass text-sm font-semibold text-white">
+            <li className="glass-card border border-dashed border-white/25 bg-white/15 text-sm font-semibold text-white">
               Searching…
             </li>
           ) : potentialMatches.length ? (
             potentialMatches.map((match) => (
               <li
                 key={match.id}
-                className="flex items-center justify-between rounded-glass border border-white/20 bg-white/18 px-glass py-glass-sm shadow-glass-soft backdrop-blur-glass transition hover:-translate-y-0.5 hover:bg-white/25 hover:shadow-glass"
+                className="glass-card flex items-center justify-between"
               >
                 <div>
                   <p className="text-sm font-semibold text-white">
@@ -106,7 +109,7 @@ export const AddFriendsTab = ({
                       match.status === "connected" ? "secondary" : "primary"
                     }
                     size="sm"
-                    className="h-9 px-glass-sm text-xs"
+                    className="min-w-[108px]"
                   >
                     {match.status === "connected"
                       ? "Message"
@@ -118,27 +121,27 @@ export const AddFriendsTab = ({
               </li>
             ))
           ) : searchTerm.trim() ? (
-            <li className="rounded-glass border border-dashed border-white/25 bg-white/20 p-glass text-sm text-white/80">
+            <li className="glass-card border border-dashed border-white/25 bg-white/15 text-sm text-white/80">
               No results yet. Try a different email or invite someone directly.
             </li>
           ) : (
-            <li className="rounded-glass border border-dashed border-white/20 bg-white/15 p-glass text-sm text-white/70">
+            <li className="glass-card border border-dashed border-white/20 bg-white/10 text-sm text-white/70">
               Start a search to find new friends.
             </li>
           )}
         </ul>
       </section>
 
-      <section className="space-y-glass-sm rounded-glass border border-white/15 bg-white/15 p-glass-lg shadow-glass-soft backdrop-blur-glass">
+      <section className="glass-panel space-y-4">
         <h3 className="text-base font-semibold text-white">
           Pending Requests (incoming)
         </h3>
-        <ul className="list-none space-y-glass-sm">
+        <ul className="list-none space-y-3">
           {incomingRequests.length ? (
             incomingRequests.map((request) => (
               <li
                 key={request.id}
-                className="flex flex-wrap items-center justify-between gap-glass-sm rounded-glass border border-white/20 bg-white/18 px-glass py-glass-sm shadow-glass-soft backdrop-blur-glass"
+                className="glass-card flex flex-wrap items-center justify-between gap-3"
               >
                 <div>
                   <p className="text-sm font-semibold text-white">
@@ -150,25 +153,17 @@ export const AddFriendsTab = ({
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Button
-                    variant="secondary"
-                    size="sm"
-                    className="h-9 px-glass-sm text-xs"
-                  >
+                  <Button variant="secondary" size="sm">
                     Accept
                   </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="h-9 px-glass-sm text-xs"
-                  >
+                  <Button variant="ghost" size="sm">
                     Reject
                   </Button>
                 </div>
               </li>
             ))
           ) : (
-            <li className="rounded-glass border border-dashed border-white/20 bg-white/15 p-glass text-sm text-white/70">
+            <li className="glass-card border border-dashed border-white/20 bg-white/10 text-sm text-white/70">
               No incoming requests right now.
             </li>
           )}

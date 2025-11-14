@@ -44,6 +44,10 @@ export const GroupMessagesResponseSchema = z.object({
   messages: z.array(MessageSchema),
 });
 
+export const MessagesResponseSchema = z.object({
+  messages: z.array(MessageSchema),
+});
+
 export const UsersSearchResponseSchema = z.object({
   users: z.array(UserSchema),
 });

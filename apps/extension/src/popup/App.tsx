@@ -12,6 +12,7 @@ import {
   type FriendListItem,
   type GroupMessage,
   type GroupSummary,
+  type HistoryMessage,
   type IncomingRequest,
   type PotentialFriend,
 } from "@/features/popup/types";
@@ -19,9 +20,10 @@ import { cn } from "@/lib/cn";
 import { AddFriendsTab } from "@/popup/tabs/AddFriendsTab";
 import { FriendsTab } from "@/popup/tabs/FriendsTab";
 import { GroupsTab } from "@/popup/tabs/GroupsTab";
+import { HistoryTab } from "@/popup/tabs/HistoryTab";
 import { formatRelativeTime, formatTimeOfDay } from "@/utils/date";
 
-type PopupTab = "friends" | "add-friends" | "groups";
+type PopupTab = "friends" | "history" | "add-friends" | "groups";
 
 type Recipient = {
   id: string;
@@ -31,6 +33,7 @@ type Recipient = {
 
 const tabs: Array<{ id: PopupTab; label: string }> = [
   { id: "friends", label: "Friends" },
+  { id: "history", label: "History" },
   { id: "add-friends", label: "Add Friends" },
   { id: "groups", label: "Groups" },
 ];
@@ -173,6 +176,8 @@ export const PopupApp = () => {
   const [messagesByGroup, setMessagesByGroup] = useState<
     Record<string, GroupMessage[]>
   >({});
+  const [rawInboxMessages, setRawInboxMessages] = useState<Message[]>([]);
+  const [rawSentMessages, setRawSentMessages] = useState<Message[]>([]);
   const [rawIncomingRequests, setRawIncomingRequests] = useState<
     FriendRequestWithUser[]
   >([]);
@@ -224,6 +229,14 @@ export const PopupApp = () => {
     [currentUser, friendUsers]
   );
 
+  const groupsMap = useMemo(() => {
+    const map = new Map<string, Group>();
+    rawGroups.forEach((group) => {
+      map.set(group.id, group);
+    });
+    return map;
+  }, [rawGroups]);
+
   const filteredFriends = useMemo(
     () =>
       friendListItems.filter((friend) => {
@@ -264,6 +277,90 @@ export const PopupApp = () => {
     if (!currentUser) return [];
     return mapIncomingRequests(rawIncomingRequests, knownUsersMap, currentUser);
   }, [currentUser, knownUsersMap, rawIncomingRequests]);
+
+  const resolveHistoryMessage = useCallback(
+    (
+      message: Message,
+      direction: HistoryMessage["direction"]
+    ): HistoryMessage => {
+      const counterpartId =
+        direction === "sent"
+          ? message.toUser
+          : (message.fromUser as string | "saved");
+
+      let counterpartKind: HistoryMessage["counterpartKind"];
+      let counterpartName: string;
+      let counterpartHandle: string | undefined;
+      let counterpartAvatarUrl: string | null | undefined;
+
+      if (counterpartId === "saved") {
+        counterpartKind = "saved";
+        counterpartName = "Saved (you)";
+        counterpartHandle = "Private space";
+        counterpartAvatarUrl = currentUser?.avatarUrl ?? null;
+      } else if (groupsMap.has(counterpartId)) {
+        const group = groupsMap.get(counterpartId)!;
+        counterpartKind = "group";
+        counterpartName = group.name;
+        counterpartHandle = `${group.members.length} members`;
+        counterpartAvatarUrl = group.avatarUrl ?? null;
+      } else {
+        counterpartKind = "user";
+        const user = knownUsersMap.get(counterpartId);
+        if (user) {
+          counterpartName = user.displayName;
+          counterpartHandle = buildHandle(user);
+          counterpartAvatarUrl = user.avatarUrl ?? null;
+        } else {
+          counterpartName = "Unknown user";
+          counterpartHandle = undefined;
+          counterpartAvatarUrl = null;
+        }
+      }
+
+      const contentPreview =
+        message.type === "link"
+          ? truncate(message.content, 96)
+          : truncate(message.content, 160);
+
+      return {
+        id: message.id,
+        direction,
+        counterpartId: counterpartId.toString(),
+        counterpartKind,
+        counterpartName,
+        counterpartHandle,
+        counterpartAvatarUrl,
+        content: message.content,
+        contentPreview,
+        note: message.note ?? undefined,
+        type: message.type,
+        createdAt: message.createdAt,
+        timestampLabel: formatRelativeTime(message.createdAt),
+      };
+    },
+    [currentUser, groupsMap, knownUsersMap]
+  );
+
+  const historySentMessages = useMemo<HistoryMessage[]>(() => {
+    const mapped = rawSentMessages.map((message) =>
+      resolveHistoryMessage(message, "sent")
+    );
+    return mapped.sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
+  }, [rawSentMessages, resolveHistoryMessage]);
+
+  const historyReceivedMessages = useMemo<HistoryMessage[]>(() => {
+    const mapped = rawInboxMessages.map((message) =>
+      resolveHistoryMessage(message, "received")
+    );
+    return mapped.sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
+  }, [rawInboxMessages, resolveHistoryMessage]);
 
   const searchRequestToken = useRef(0);
   const loadAbortRef = useRef<AbortController | null>(null);
@@ -456,12 +553,15 @@ export const PopupApp = () => {
     setIsLoadingMessages(false);
 
     try {
-      const [meRes, friendsRes, requestsRes, groupsRes] = await Promise.all([
-        api.getCurrentUser(),
-        api.getFriends(),
-        api.getFriendRequests(),
-        api.getGroups(),
-      ]);
+      const [meRes, friendsRes, requestsRes, groupsRes, inboxRes, sentRes] =
+        await Promise.all([
+          api.getCurrentUser(),
+          api.getFriends(),
+          api.getFriendRequests(),
+          api.getGroups(),
+          api.getInboxMessages(),
+          api.getSentMessages(),
+        ]);
 
       if (controller.signal.aborted) return;
 
@@ -471,6 +571,8 @@ export const PopupApp = () => {
       setRawIncomingRequests(requestsRes.incoming);
       setRawOutgoingRequests(requestsRes.outgoing);
       setRawGroups(groupsRes.groups);
+      setRawInboxMessages(inboxRes.messages);
+      setRawSentMessages(sentRes.messages);
 
       const directory = new Map<string, User>();
       directory.set(me.id, me);
@@ -622,7 +724,7 @@ export const PopupApp = () => {
 
     if (error) {
       return (
-        <div className="flex h-full flex-col items-center justify-center gap-glass-sm text-center">
+        <div className="flex h-full flex-col items-center justify-center gap-3 text-center">
           <p className="text-sm font-semibold text-white">{error}</p>
           <Button size="sm" variant="secondary" onClick={() => void loadData()}>
             Retry
@@ -642,6 +744,13 @@ export const PopupApp = () => {
             onSelectAll={handleSelectAllFriends}
             onClearSelection={handleClearSelection}
             onCreateGroupFromSelection={handleCreateGroupFromSelection}
+          />
+        );
+      case "history":
+        return (
+          <HistoryTab
+            sentMessages={historySentMessages}
+            receivedMessages={historyReceivedMessages}
           />
         );
       case "add-friends":
@@ -673,43 +782,35 @@ export const PopupApp = () => {
   };
 
   return (
-    <div className="relative flex h-[640px] w-[420px] flex-col gap-glass rounded-glass-lg border border-white/15 bg-white/12 p-glass-xl text-white shadow-glass backdrop-blur-glass">
-      <header className="flex items-center gap-glass-sm rounded-glass border border-white/20 bg-white/15 px-glass-md py-glass-sm shadow-glass-soft backdrop-blur-glass">
-        <div className="flex flex-1 items-center gap-glass-sm rounded-pill border border-white/20 bg-white/25 px-glass-sm py-glass-sm shadow-glass-soft backdrop-blur-glass">
-          <Search className="h-4 w-4 text-white/80" aria-hidden />
+    <div className="glass-panel relative flex h-[660px] w-[460px] flex-col gap-6 overflow-hidden text-white">
+      <header className="glass-panel-sm flex items-center gap-3 bg-white/[0.14]">
+        <div className="flex flex-1 items-center gap-3 rounded-full border border-white/20 bg-white/15 px-4 py-2">
+          <Search className="h-4 w-4 text-white/75" aria-hidden />
           <Input
             value={searchTerm}
             onChange={(event) => setSearchTerm(event.target.value)}
-            placeholder="Search"
-            className="border-none px-0 shadow-none text-sm text-white placeholder:text-white/60 focus:ring-0 focus-visible:ring-0"
+            placeholder="Search people or groups"
+            className="h-9 border-none bg-transparent px-0 text-sm text-white placeholder:text-white/60 focus:ring-0 focus-visible:ring-0"
           />
         </div>
-        <Button
-          variant="secondary"
-          size="sm"
-          className="h-10 w-10 rounded-pill bg-white/25 text-white shadow-glass-soft backdrop-blur-glass"
-        >
+        <Button variant="subtle" size="sm" className="h-10 w-10 rounded-full">
           <Settings className="h-5 w-5" aria-hidden />
         </Button>
-        <Button
-          variant="ghost"
-          size="sm"
-          className="h-10 w-10 rounded-pill border border-white/20 bg-transparent text-white"
-        >
+        <Button variant="ghost" size="sm" className="h-10 w-10 rounded-full">
           <X className="h-5 w-5" aria-hidden />
         </Button>
       </header>
 
-      <nav className="grid grid-cols-3 gap-glass-sm rounded-pill border border-white/15 bg-white/10 p-[6px] shadow-glass-soft backdrop-blur-glass">
+      <nav className="glass-panel-sm grid grid-cols-4 gap-2 p-2">
         {tabs.map((tab) => (
           <button
             key={tab.id}
             type="button"
             onClick={() => setActiveTab(tab.id)}
             className={cn(
-              "rounded-pill px-glass-sm py-glass-sm text-sm font-semibold text-white/75 transition hover:-translate-y-0.5 hover:bg-white/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-glass-accent/40",
+              "rounded-full px-3 py-2 text-sm font-semibold text-white/75 transition hover:-translate-y-0.5 hover:bg-white/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-glass-accent/40",
               activeTab === tab.id &&
-                "bg-[linear-gradient(135deg,rgba(96,165,250,0.35),rgba(165,180,252,0.3))] text-white shadow-glass"
+                "bg-[linear-gradient(135deg,rgba(96,165,250,0.45),rgba(165,180,252,0.35))] text-white shadow-glass-soft"
             )}
           >
             {tab.label}
@@ -717,36 +818,40 @@ export const PopupApp = () => {
         ))}
       </nav>
 
-      <main className="flex flex-1 flex-col rounded-glass border border-white/15 bg-white/15 p-glass shadow-glass backdrop-blur-glass">
-        {renderActiveTab()}
+      <main className="glass-surface flex-1 overflow-hidden">
+        <div className="flex h-full flex-col gap-5 p-5">
+          {renderActiveTab()}
+        </div>
       </main>
 
-      <section className="space-y-glass-sm rounded-glass border border-white/15 bg-white/12 p-glass shadow-glass backdrop-blur-glass">
+      <section className="glass-panel space-y-4">
         <label className="flex flex-col gap-2 text-sm">
-          <span className="font-semibold text-white/90">Message / Note</span>
+          <span className="section-title">Message / Note</span>
           <textarea
             rows={3}
             value={note}
             onChange={(event) => setNote(event.target.value)}
             placeholder="Add a short note (optional)"
-            className="rounded-glass border border-white/25 bg-white/18 px-glass-sm py-glass-sm text-sm text-white shadow-glass-soft backdrop-blur-glass placeholder:text-white/55 focus:border-white focus:outline-none focus:ring-2 focus:ring-glass-accent/40 focus:ring-offset-2 focus:ring-offset-white/10"
+            className="rounded-3xl border border-white/20 bg-white/10 px-4 py-3 text-sm text-white shadow-glass-soft backdrop-blur-glass placeholder:text-white/55 focus:border-white focus:outline-none focus:ring-2 focus:ring-glass-accent/40 focus:ring-offset-1 focus:ring-offset-white/10"
           />
         </label>
-        <div className="flex flex-wrap items-center gap-glass-sm">
+        <div className="flex flex-wrap items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
           <MessageSquare className="h-4 w-4 text-white/80" aria-hidden />
-          <span className="text-xs font-semibold uppercase text-white/70">
-            Selected:
+          <span className="text-xs font-semibold uppercase tracking-[0.18em] text-white/60">
+            Selected
           </span>
           {selectedRecipients.length ? (
-            selectedRecipients.map((recipient) => (
-              <RecipientChip
-                key={recipient.id}
-                label={recipient.label}
-                onRemove={() => handleRemoveRecipient(recipient.id)}
-              />
-            ))
+            <div className="flex flex-wrap gap-2">
+              {selectedRecipients.map((recipient) => (
+                <RecipientChip
+                  key={recipient.id}
+                  label={recipient.label}
+                  onRemove={() => handleRemoveRecipient(recipient.id)}
+                />
+              ))}
+            </div>
           ) : (
-            <span className="text-xs text-white/60">No recipients yet.</span>
+            <span className="text-xs text-white/65">No recipients yet.</span>
           )}
         </div>
         {sendError ? (

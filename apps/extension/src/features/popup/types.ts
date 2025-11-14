@@ -42,3 +42,21 @@ export interface GroupMessage {
   content: string;
   type: "link" | "text";
 }
+
+export type HistoryMessageDirection = "sent" | "received";
+
+export interface HistoryMessage {
+  id: string;
+  direction: HistoryMessageDirection;
+  counterpartId: string;
+  counterpartKind: "user" | "group" | "saved";
+  counterpartName: string;
+  counterpartHandle?: string;
+  counterpartAvatarUrl?: string | null;
+  content: string;
+  contentPreview: string;
+  note?: string;
+  type: "link" | "text";
+  createdAt: string;
+  timestampLabel: string;
+}

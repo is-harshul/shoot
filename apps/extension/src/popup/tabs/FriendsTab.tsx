@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import type { FriendListItem } from "@/features/popup/types";
+import { cn } from "@/lib/cn";
 
 const presenceMeta: Record<
   FriendListItem["presence"],
@@ -46,9 +47,11 @@ export const FriendsTab = ({
 
   if (!filteredFriends.length) {
     return (
-      <div className="flex flex-col items-center justify-center rounded-glass border border-white/25 bg-white/20 px-glass-lg py-glass-xl text-center text-sm text-white shadow-glass-soft backdrop-blur-glass">
-        <p className="font-semibold">No friends match “{searchTerm}”.</p>
-        <p className="mt-2 text-xs text-white/70">
+      <div className="glass-panel-sm flex flex-col items-center justify-center gap-3 text-center text-sm text-white/80">
+        <p className="text-base font-semibold text-white">
+          No friends match “{searchTerm}”
+        </p>
+        <p className="text-xs text-white/60">
           Try searching by handle or invite someone new.
         </p>
       </div>
@@ -56,8 +59,8 @@ export const FriendsTab = ({
   }
 
   return (
-    <div className="flex h-full flex-col overflow-hidden">
-      <ul className="flex-1 list-none space-y-glass-sm overflow-y-auto pr-1">
+    <div className="flex h-full flex-col gap-5 overflow-hidden">
+      <ul className="thin-scrollbar flex-1 list-none space-y-3 overflow-y-auto pr-1 scroll-smooth-touch">
         {filteredFriends.map((friend) => {
           const presence = presenceMeta[friend.presence];
           const isDisabled =
@@ -67,7 +70,12 @@ export const FriendsTab = ({
           return (
             <li key={friend.id}>
               <label
-                className="flex cursor-pointer items-center gap-glass rounded-glass border border-white/25 bg-white/18 px-glass-sm py-glass-sm shadow-glass-soft backdrop-blur-glass transition hover:-translate-y-0.5 hover:bg-white/30 hover:shadow-glass focus-within:border-white/40"
+                className={cn(
+                  "glass-card flex cursor-pointer items-center gap-4",
+                  isDisabled &&
+                    "cursor-not-allowed opacity-70 hover:translate-y-0 hover:bg-white/15",
+                  isSelected && "border-white/35 bg-white/20"
+                )}
                 aria-disabled={isDisabled}
               >
                 <Checkbox
@@ -123,29 +131,18 @@ export const FriendsTab = ({
           );
         })}
       </ul>
-      <footer className="mt-glass-sm flex flex-wrap items-center justify-between gap-glass-sm rounded-glass border border-white/20 bg-white/15 p-glass-sm shadow-glass-soft backdrop-blur-glass">
-        <div className="flex items-center gap-glass-sm">
-          <Button
-            variant="ghost"
-            size="sm"
-            className="h-9 px-glass-sm text-xs"
-            onClick={onSelectAll}
-          >
+      <footer className="glass-panel-sm flex flex-wrap items-center justify-between gap-3">
+        <div className="flex items-center gap-2">
+          <Button variant="ghost" size="sm" onClick={onSelectAll}>
             Select All
           </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="h-9 px-glass-sm text-xs"
-            onClick={onClearSelection}
-          >
+          <Button variant="ghost" size="sm" onClick={onClearSelection}>
             Clear
           </Button>
         </div>
         <Button
           variant="secondary"
           size="sm"
-          className="h-9 px-glass-sm text-xs"
           onClick={onCreateGroupFromSelection}
           disabled={selectedRecipientIds.length < 2}
         >

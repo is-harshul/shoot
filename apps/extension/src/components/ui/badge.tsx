@@ -25,7 +25,7 @@ export const Badge = ({
 }: BadgeProps) => (
   <span
     className={cn(
-      "inline-flex items-center rounded-pill px-glass-sm py-[6px] text-xs font-semibold uppercase tracking-wide",
+      "inline-flex items-center rounded-full px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.16em]",
       badgeStyles[variant],
       className
     )}

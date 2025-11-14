@@ -8,7 +8,7 @@
     "packages/*"
   ],
   "scripts": {
-    "dev:extension": "npm run dev --workspace extension",
+    "dev:extension": "npm run dev --workspace=@shoot/extension",
     "build:extension": "npm run build --workspace extension",
     "lint:extension": "npm run lint --workspace extension",
     "dev:backend": "npm run dev --workspace backend",

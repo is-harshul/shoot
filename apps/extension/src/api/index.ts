@@ -7,6 +7,7 @@ import {
   GroupMessagesResponseSchema,
   GroupsResponseSchema,
   MeResponseSchema,
+  MessagesResponseSchema,
   SendMessagePayloadSchema,
   SendMessageResponseSchema,
   UsersSearchResponseSchema,
@@ -24,6 +25,8 @@ export const api = {
   getGroups: () => request("/groups", GroupsResponseSchema),
   getGroupMessages: (groupId: string) =>
     request(`/groups/${groupId}/messages`, GroupMessagesResponseSchema),
+  getInboxMessages: () => request("/messages/inbox", MessagesResponseSchema),
+  getSentMessages: () => request("/messages/sent", MessagesResponseSchema),
   searchUsers: (query: string, limit = 10) =>
     request(
       `/users/search?q=${encodeURIComponent(query)}&limit=${limit}`,
